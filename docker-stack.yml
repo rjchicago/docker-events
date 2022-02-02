@@ -7,17 +7,11 @@ services:
       DOCKER_EVENTS_SINCE: ${DOCKER_EVENTS_SINCE:-0s}
       HOSTNAME: "{{.Node.Hostname}}"
       SWARM_NAME: "${SWARM_NAME:-}"
-      SWARM_MODE: true
-      REMOTE_HOST: dtsjc00uii00d.dc.dotomi.net
-      DOCKER_TLS_PATH: /etc/docker/tls
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - /etc/docker/tls:/etc/docker/tls
     deploy:
       mode: global
       labels:
-        - cnvr.portainer.team=CNVR_Docker_Admin
-        - cnvr.kurls.links.metrics=${KURLS_LINKS_METRICS}
         - traefik.enable=true
         - traefik.docker.network=${TRAEFIK_NET:-traefik-net-admin}
         - traefik.http.routers.docker-events.rule=${TRAEFIK_RULE}

@@ -1,8 +1,5 @@
-const { spawn, execSync } = require('child_process');
+const { spawn } = require('child_process');
 const EventEmitter = require('events');
-
-const SWARM_MODE = process.env.SWARM_MODE === 'true';
-const DOCKER_TLS_PATH = process.env.DOCKER_TLS_PATH || undefined;
 
 class DockerEvents {
     static init = () => {
@@ -33,35 +30,16 @@ class DockerEvents {
 
     static onClose = (code, node) => {
         if (code) console.log(`process exited ${code}`);
-        if (node) DockerEvents.listening = DockerEvents.listening.filter(n => n === node);
         DockerEvents.listen();
     };
 
-    static listening = [];
-
     static listen = async () => {
-        console.log(`SWARM_MODE=${SWARM_MODE}`);
-        if (SWARM_MODE) {
-            if (!DOCKER_TLS_PATH) throw Error(`DOCKER_TLS_PATH is required for Swarm mode.`);
-            const nodes = execSync('docker node ls --format "{{.Hostname}}"').toString().match(/^(.+)$/gm);
-            nodes.filter(node => !DockerEvents.listening.includes(node)).forEach(node => {
-                console.log(`DockerEvents.listen: ${node}`);
-                DockerEvents.listening.push(node);
-                const DOCKER_CMD_OPTIONS = `-H=${node} --tlsverify --tlscacert=${DOCKER_TLS_PATH}/ca.pem --tlscert=${DOCKER_TLS_PATH}/cert.pem --tlskey=${DOCKER_TLS_PATH}/key.pem`;
-                const child = spawn('docker', [ DOCKER_CMD_OPTIONS, 'events', '--since', DockerEvents.nextSince, '--format', '"{{json .}}"' ], { shell: true });
-                child.stderr.pipe(process.stderr);
-                child.stdout.setEncoding('utf8');
-                child.stdout.on('data', DockerEvents.onData);
-                child.on('close', (code) => DockerEvents.onClose(code, node));
-            });
-        } else {
-            console.log(`DockerEvents.listen: local`);
-            const child = spawn('docker', [ 'events', '--since', DockerEvents.nextSince, '--format', '"{{json .}}"' ], { shell: true });
-            child.stderr.pipe(process.stderr);
-            child.stdout.setEncoding('utf8');
-            child.stdout.on('data', DockerEvents.onData);
-            child.on('close', DockerEvents.onClose);
-        }
+        console.log(`DockerEvents.listen: local`);
+        const child = spawn('docker', [ 'events', '--since', DockerEvents.nextSince, '--format', '"{{json .}}"' ], { shell: true });
+        child.stderr.pipe(process.stderr);
+        child.stdout.setEncoding('utf8');
+        child.stdout.on('data', DockerEvents.onData);
+        child.on('close', DockerEvents.onClose);
     };
 }
 
