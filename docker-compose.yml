@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  docker-events:
+    image: rjchicago/docker-events:${VERSION:-latest}
+    container_name: docker-events
+    build: 
+      context: ./docker-events
+    command: "npm run debug"
+    environment:
+      DOCKER_EVENTS_SINCE: ${DOCKER_EVENTS_SINCE:-0s}
+      HOSTNAME: "{{.Node.Hostname}}"
+      SWARM_NAME: "${SWARM_NAME:-local-swarm}"
+      SWARM_MODE: false
+      REMOTE_HOST: dtsjc00uii00d.dc.dotomi.net
+      DOCKER_TLS_PATH: "/docker/tls"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./docker-events/package.json:/docker-events/package.json
+      - ./docker-events/src:/docker-events/src
+    ports:
+      - "3000:3000"
+      - "9229:9229"
