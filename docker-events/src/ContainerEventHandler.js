@@ -9,7 +9,6 @@ class ContainerEventHandler {
             Actor: {
                 Attributes: {
                     'com.docker.stack.namespace': stack_name,
-                    'com.docker.swarm.service.id': service_id,
                     'com.docker.swarm.service.name': service_name
                 }
             }
@@ -19,7 +18,6 @@ class ContainerEventHandler {
             action,
             image,
             stack_name,
-            service_id,
             service_name
         };
     }
