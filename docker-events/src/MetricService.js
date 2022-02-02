@@ -1,8 +1,8 @@
 const client = require("prom-client");
 
-const hostname = process.env.HOSTNAME || undefined;
-const swarmName = process.env.SWARM_NAME || undefined;
-const globalLabels = ['env', 'instance'];
+const HOSTNAME = process.env.HOSTNAME || undefined;
+const SWARM_NAME = process.env.SWARM_NAME || undefined;
+const GLOBAL_LABELS = { env: SWARM_NAME, instance: HOSTNAME };
 
 class MetricService {
     static collections = {};
@@ -14,7 +14,7 @@ class MetricService {
         MetricService.collections[jsonKey].count++;
     };
     static getLabels = () => {
-        return [...new Set(globalLabels.concat(
+        return [...new Set(Object.keys(GLOBAL_LABELS).concat(
                 ...Object.keys(MetricService.collections)
                 .map(jsonKey => Object.keys(JSON.parse(jsonKey)))   
         ))];
@@ -29,9 +29,9 @@ class MetricService {
             registers: [registry],
         });
         Object.keys(MetricService.collections).forEach(jsonKey => {
-            const event = JSON.parse(jsonKey);
-            Object.assign(event, {env: swarmName, instance: hostname});
-            gauge.labels(event).set(MetricService.collections[jsonKey].count);
+            const labels = JSON.parse(jsonKey);
+            Object.assign(labels, GLOBAL_LABELS);
+            gauge.labels(labels).set(MetricService.collections[jsonKey].count);
         });
         return await registry.metrics();
     };
