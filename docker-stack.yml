@@ -2,11 +2,11 @@ version: "3.8"
 
 services:
   docker-events:
-    image: dtr.cnvr.net/gui/docker-events:${VERSION:-latest}
+    image: rjchicago/docker-events:${VERSION:-latest}
     environment:
       DOCKER_EVENTS_SINCE: ${DOCKER_EVENTS_SINCE:-0s}
       HOSTNAME: "{{.Node.Hostname}}"
-      SWARM_NAME: "${SWARM_NAME:-}"
+      SWARM_NAME: "${SWARM_NAME:-SWARM_NAME}"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     deploy:

@@ -14,7 +14,7 @@ class MetricService {
         MetricService.collections[jsonKey].count++;
     };
     static getLabels = () => {
-        return [...new Set([].concat(globalLabels).concat(
+        return [...new Set(globalLabels.concat(
                 ...Object.keys(MetricService.collections)
                 .map(jsonKey => Object.keys(JSON.parse(jsonKey)))   
         ))];
@@ -35,34 +35,6 @@ class MetricService {
         });
         return await registry.metrics();
     };
-    // static pushName = (type, event) => {
-    //     if (!MetricService.collections[type]) {
-    //         MetricService.collections[type] = {_labels: Object.keys(event)};
-    //     }
-    //     const jsonKey = JSON.stringify(event);
-    //     if (!MetricService.collections[type][jsonKey]) {
-    //         MetricService.collections[type][jsonKey] = 0;
-    //     }
-    //     MetricService.collections[type][jsonKey]++;
-    // }
-
-    // static collect = async () => {
-    //     const registry = new client.Registry();
-    //     Object.keys(MetricService.collections).forEach(key => {
-    //         const collection = MetricService.collections[key];
-    //         const gauge = new client.Gauge({
-    //             name: `docker_${key}_events`,
-    //             help: `Docker Events: ${key}`,
-    //             labelNames: collection._labels,
-    //             registers: [registry],
-    //         });
-    //         Object.keys(collection).filter(key => key.startsWith('{')).forEach(jsonKey => {
-    //             const event = JSON.parse(jsonKey);
-    //             gauge.labels(event).set(collection[jsonKey]);
-    //         });
-    //     });
-    //     return await registry.metrics();
-    // };
 }
 
 module.exports = MetricService;
