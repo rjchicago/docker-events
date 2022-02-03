@@ -2,11 +2,10 @@
 const express = require('express');
 const http = require('http');
 const DockerEvents = require('./DockerEvents');
-const ContainerEventHandler = require('./ContainerEventHandler');
 const MetricService = require('./MetricService');
 
 DockerEvents.init();
-DockerEvents.on('container', ContainerEventHandler.pushEvent);
+DockerEvents.on('container', MetricService.push);
 
 // https://docs.docker.com/engine/reference/commandline/events/
 // DockerEvents.on('container', console.log);
