@@ -7,6 +7,7 @@ services:
       DOCKER_EVENTS_SINCE: ${DOCKER_EVENTS_SINCE:-0s}
       HOSTNAME: "{{.Node.Hostname}}"
       SWARM_NAME: "${SWARM_NAME:-SWARM_NAME}"
+      METRIC_EVENT_TYPES: "container" # comma separated
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     deploy:
