@@ -6,8 +6,11 @@ class DockerEvents {
         DockerEvents._eventEmitter = new EventEmitter();
         DockerEvents.listen();
     };
-    static on = (type, listener) => DockerEvents._eventEmitter.on(type, listener);
 
+    static on = (type, listener) => {
+        console.log(`addListener: ${type}`)
+        DockerEvents._eventEmitter.addListener(type, listener);
+    };
     static get nextSince() {
         const since = EventEmitter._since || process.env.DOCKER_EVENTS_SINCE || '0s';
         EventEmitter._since = Math.floor(new Date().getTime() / 1000);

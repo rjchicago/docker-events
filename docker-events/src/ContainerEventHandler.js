@@ -25,7 +25,6 @@ class ContainerEventHandler {
     static pushEvent = (event) => {
         const parsed = ContainerEventHandler.parseEvent(event);
         MetricService.push(parsed);
-        console.log(parsed);
     }
 }
 
