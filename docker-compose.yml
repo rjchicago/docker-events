@@ -11,6 +11,7 @@ services:
       DOCKER_EVENTS_SINCE: ${DOCKER_EVENTS_SINCE:-0s}
       HOSTNAME: "{{.Node.Hostname}}"
       SWARM_NAME: "${SWARM_NAME:-local-swarm}"
+      METRIC_EVENT_TYPES: "container"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./docker-events/package.json:/docker-events/package.json

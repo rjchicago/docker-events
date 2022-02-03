@@ -5,7 +5,8 @@ const DockerEvents = require('./DockerEvents');
 const MetricService = require('./MetricService');
 
 DockerEvents.init();
-DockerEvents.on('container', MetricService.push);
+const METRIC_EVENT_TYPES = process.env.METRIC_EVENT_TYPES.split(/[;,]/g).map(t=>t.trim()) || [];
+METRIC_EVENT_TYPES.map(type => DockerEvents.on(type, MetricService.push))
 
 // https://docs.docker.com/engine/reference/commandline/events/
 // DockerEvents.on('container', console.log);
